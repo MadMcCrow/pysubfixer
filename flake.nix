@@ -10,15 +10,15 @@
         "x86_64-linux"
         "aarch64-darwin"
       ];
-
-      flake = system : {
-      devShells.${system} =
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.callPackage ./shell.nix { };
-        };
+      flake = system :
+      let 
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+      legacyPackages.${system} = rec {
+        pysubfixer = pkgs.callPackage ./pysubfixer.nix { };
+        default = pysubfixer;
+      };
+      devShells.${system}.default = pkgs.callPackage ./shell.nix { };
     }; 
     in
     fold' flake {} systems;

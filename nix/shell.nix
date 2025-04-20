@@ -4,13 +4,12 @@
   ...
 }:
 let 
+nixtools = [ nixfmt-rfc-style deadnix ];
 python = pkgs.python311;
 in 
 pkgs.mkShell.override { stdenv = pkgs.stdenvNoCC; } {
   packages = with pkgs; [
-    #nix
-    nixfmt-rfc-style
-    deadnix
+    
     # ffmpeg
     ffmpeg
     # python
