@@ -15,3 +15,5 @@ class NumericWidget(QSpinBox) :
         self.setRange(-2147483648,2147483647)
         # create layout
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+    
