@@ -1,12 +1,13 @@
-# ./default.nix
+# ./pysubfixer.nix
 # script to generate bash script
-{  python311Packages, ... }:
+{ pythonVersion, callPackage, ... } :
 # build with python 311
-with python311Packages;
+with pythonVersion.pkgs;
 buildPythonApplication {
   pname = "pysubfixer";
   version = "1.0";
   pyproject = true;
-  buildInputs = [ poetry-core ];
-  src = ./.;
+  buildInputs = [ poetry-core pyside6 ];
+  propagatedBuildInputs = [pyside6];
+  src = ./..;
 }

@@ -1,7 +1,11 @@
 # simple flake to help using pysubfixer
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # don't rebuild if you don't have to
+    nixpkgs = {
+      type = "indirect";
+      id = "nixpkgs";
+    };
   };
   outputs =
     { nixpkgs, ... }@inputs:
@@ -13,14 +17,13 @@
       flake = system :
       let 
         pkgs = nixpkgs.legacyPackages.${system};
+        args = {pythonVersion = pkgs.python311;};
       in {
-      legacyPackages.${system} = rec {
-        pysubfixer = pkgs.callPackage ./pysubfixer.nix { };
-        default = pysubfixer;
-      };
-      devShells.${system}.default = pkgs.callPackage ./shell.nix { };
+      legacyPackages.${system}    = pkgs.callPackage ./nix/pysubfixer.nix args;
+      devShells.${system}.default = pkgs.callPackage ./nix/shell.nix      args;
+      apps.${system} = pkgs.callPackages ./nix/apps.nix args;
     }; 
     in
-    fold' flake {} systems;
+    builtins.foldl' (x: y:  x  // y) { } (map flake systems);
     
 }

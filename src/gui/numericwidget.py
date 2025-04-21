@@ -1,22 +1,17 @@
 #! /usr/env python
 # gui/numericwidget.py : widget for selecting numbers
 
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QLabel
+from PySide6.QtWidgets import QSpinBox, QSizePolicy
+from sys import maxsize
 
-class NumericWidget(QWidget) :
+class NumericWidget(QSpinBox) :
     """
     A widget that allows selecting integers
     """
     def __init__(self, parent = None) :
         super(NumericWidget, self).__init__(parent)
-        self.textbox = QLineEdit("0")
-        # TODO : support validators
-        #self.textbox.setValidator(Qt.QIntValidator())
-        horizontalLayout = QHBoxLayout()
-        horizontalLayout.addWidget(QLabel("Delay :"))
-        horizontalLayout.addWidget(self.textbox)
-        self.setLayout(horizontalLayout)
-
-    def get_value(self) -> int :
-        #TODO : handle errors !
-        return int(self.textbox.text())
+        self.setValue(0)
+        # max possible range
+        self.setRange(-2147483648,2147483647)
+        # create layout
+        self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)

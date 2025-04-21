@@ -1,10 +1,10 @@
-#! /usr/env python
-# cli/main.py : run as commandline script
-
+# main.py :
+# main application
 # imports :
 from sys import exit
 from argparse import ArgumentParser
-from ffmpeg import delay_subs, remove_subs, embed_subs, FfmpegException
+from ffmpeg import delay_subs, remove_subs, embed_subs
+from gui import runApplication
 try :
     from rich import print
 except:
@@ -30,10 +30,14 @@ def parse_args() :
     parse command line arguments and/or generate errors for the user
     """
     parser = ArgumentParser(description="Fix your subtitles with this amazing script !")
-    parser.add_argument("video_file", help="input video file")
-    parser.add_argument("subtitle_file", help="input subtitle file")
-    parser.add_argument("-d", "--delay", type=int, help="delay amount in seconds")
-    parser.add_argument("-s", "--simulate", action="store_true", help="Enable simulate mode")
+    subparsers = parser.add_subparsers(description='available subcommands')
+    #TODO allow for asking for GUI
+    parser_main = subparsers.add_parser('<main_command_name>')
+    #parser.add_argument("video_file", help="input video file")
+    parser_main.add_argument("video_file", help="input video file")
+    parser_main.add_argument("subtitle_file", help="input subtitle file")
+    parser_main.add_argument("-d", "--delay", type=int, help="delay amount in seconds")
+    parser_main.add_argument("-s", "--simulate", action="store_true", help="Enable simulate mode")
     args = parser.parse_args()
     global _simulate
     _simulate = args.simulate
@@ -44,11 +48,10 @@ def parse_args() :
         "delay" : args.delay if args.delay is not None else 0,
      }
 
-def main() :
+def cmd(command : dict) :
     """
-    Main CLI function
+    Execute ffmpeg command to embed the sub
     """
-    command = parse_args()
     try:
         newsubs = delay_subs(command["subs"], command["delay"])
         nosubs = remove_subs(command["source"])
@@ -61,6 +64,23 @@ def main() :
         print('\n'.join(errors[-error_lines:]))
         exit(1)
 
+def cli() :
+    """
+    call the CLI app
+    """
+    command = parse_args()
+    cmd(command)
+    
+
+
+def gui() :
+    """
+    call the gui app !
+    """
+    runApplication(cmd)
+    
+
 # execute !
 if __name__ == "__main__":
-    main()
+    gui()
+

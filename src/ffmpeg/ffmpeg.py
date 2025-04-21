@@ -2,7 +2,7 @@
 # ffmpeg.py : various ffmpeg command functions
 
 # import our runner
-from process import ffmpeg_process
+from .process import ffmpeg_process
 
 
 def delay_subs(inputfile, seconds) -> str :
