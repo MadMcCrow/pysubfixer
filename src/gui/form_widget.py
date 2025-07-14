@@ -15,6 +15,9 @@ class FormWidget(QWidget) :
         self.formlayout.setLabelAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.formlayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         
-    def addWidget(self, label, widget) :
+    def add_widget(self, label, widget) :
         widget.setParent(self)
         self.formlayout.addRow(label, widget)
+        return widget
+
+

@@ -5,7 +5,7 @@
 let 
 pysubfixer = callPackage ./pysubfixer.nix {inherit pythonVersion; } ;
 in
-{
+rec {
 pysubfixer-gui = {
     type = "app";
     program = "${pysubfixer}/bin/pysubfixer-gui";
@@ -14,4 +14,5 @@ pysubfixer-cli = {
     type = "app";
     program = "${pysubfixer}/bin/pysubfixer-cli";
   };
+  default = pysubfixer-gui;
 }

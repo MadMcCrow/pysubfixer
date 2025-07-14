@@ -1,10 +1,18 @@
 #! /usr/env python
 # gui/numericwidget.py : widget for selecting numbers
 
-from PySide6.QtWidgets import QSpinBox, QSizePolicy
+# python
 from sys import maxsize
 
+# QT
+from PySide6.QtWidgets import QSpinBox, QSizePolicy
+from PySide6.QtCore    import Signal, Slot
+
+
 class NumericWidget(QSpinBox) :
+
+    on_change = Signal(int)
+
     """
     A widget that allows selecting integers
     """
@@ -15,5 +23,12 @@ class NumericWidget(QSpinBox) :
         self.setRange(-2147483648,2147483647)
         # create layout
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.valueChanged.connect(self._post_change_value)
+
+    @Slot(int)
+    def _post_change_value(self, value) :
+        # just pass value for now
+        self.on_change.emit(value)
+        
 
     
