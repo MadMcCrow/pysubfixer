@@ -5,7 +5,6 @@ description = "tool to change embedded subtitles"
 authors = ["MadMcCrow <do-not-mail.me@please.com>"]
 packages = [
         {include = "gui",    from = "src"},
-        {include = "ffmpeg", from = "src"},
         {include = "src"},
     ]
 readme = "docs/README.md"
@@ -16,8 +15,8 @@ python = "^3.11"
 PySide6 = "^6.0.0"
 
 [tool.poetry.scripts]
-pysubfixer-cli = 'src.main:cli'
-pysubfixer-gui = 'src.main:gui'
+pysubfixer-cli = 'src.pysubfixer:cli'
+pysubfixer-gui = 'src.pysubfixer:gui'
 
 [build-system]
 requires = ["poetry-core>=1.9.1,<3.0"]
@@ -38,7 +37,9 @@ copy-metadata = [
 ]
 
 [tool.poetry-pyinstaller-plugin.scripts]
-pysubfixer = "src/main.py"
+pysubfixer     = "src/pysubfixer.py"
+pysubfixer-gui = "src/pysubfixer.py:gui"
+pysubfixer-cli = "src/pysubfixer.py:cli"
 
 [tool.poetry-pyinstaller-plugin.collect]
 # Collect all submodules, data files & binaries for 'package_A' and 'package_B'

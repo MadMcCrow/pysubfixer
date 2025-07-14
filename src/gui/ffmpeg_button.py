@@ -8,7 +8,7 @@ import shlex
 from PySide6.QtWidgets import QStackedWidget, QPushButton, QProgressBar
 
 # ours
-from ffmpeg import fix_subs
+from pysubfixer import fix_subs
 
 class RunButton(QStackedWidget) :
     """
