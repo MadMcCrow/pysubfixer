@@ -1,9 +1,9 @@
 # apps.nix :
 # allows running apps in flake
 # TODO: simplify and regroup !
-{ pythonVersion, callPackage, ... } : 
+{ python, callPackage, ... } : 
 let 
-pysubfixer = callPackage ./pysubfixer.nix {inherit pythonVersion; } ;
+pysubfixer = callPackage ./pysubfixer.nix {inherit python; } ;
 in
 rec {
 pysubfixer-gui = {

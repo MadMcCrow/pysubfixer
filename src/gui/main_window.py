@@ -50,19 +50,19 @@ class MainWindow(QMainWindow) :
 
     @Slot(str)
     def on_video_set(self, path) :
-        self._run_button.arguments["video"] = path
-
+        self._run_button.video = path
+        
     @Slot(str)
     def on_subs_set(self, path) :
-        self._run_button.arguments["subs"] = path
+        self._run_button.subs = path
 
     @Slot(int)
     def on_delay_set(self, secs) :
-        self._run_button.arguments["delay"] = secs
+        self._run_button.delay = secs
 
     @Slot(str)
     def on_output_set(self, path) :
-        self._run_button.arguments["output"] = path
+        self._run_button.output = path
 
 
 

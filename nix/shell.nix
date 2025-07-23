@@ -1,23 +1,24 @@
+# shell for developmnent
 {
-  pkgs ? import <nixpkgs> { },
+  mkShell,
   lib,
+  python,
   ...
 }:
-with pkgs;
-let 
-nixtools = [ nixfmt-rfc-style deadnix ];
-python = pkgs.python311;
-in 
 mkShell {
   packages = [  
-    # ffmpeg
     ffmpeg
-    # python
     python
-  ] ++ (with python.pkgs; [
+  ] ++
+  (with python.pkgs; [
+    pycall
     pyside6
     nuitka
     ccache
     poetry-core
-  ]);
+  ]) ++
+  [ 
+    nixfmt-rfc-style
+    deadnix
+  ];
 }

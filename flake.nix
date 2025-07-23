@@ -6,9 +6,14 @@
       type = "indirect";
       id = "nixpkgs";
     };
+    # pycall tool
+    pycall = {
+      url = github:MadMcCrow/pycall;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
-    { nixpkgs, ... }@inputs:
+    { nixpkgs, pycall, ... }@inputs:
     let
       systems = [
         "x86_64-linux"
@@ -17,7 +22,9 @@
       flake = system :
         let 
           pkgs = nixpkgs.legacyPackages.${system};
-          args = {pythonVersion = pkgs.python311;};
+          args = {
+            python = pycall.packages.${system}.python311;
+            };
         in {
         legacyPackages.${system}    = pkgs.callPackage ./nix/pysubfixer.nix args;
         devShells.${system}.default = pkgs.callPackage ./nix/shell.nix      args;

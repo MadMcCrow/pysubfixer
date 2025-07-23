@@ -1,8 +1,8 @@
 # ./pysubfixer.nix
 # script to generate bash script
-{ pythonVersion, callPackage, ... } :
+{ python, callPackage, ... } :
 # build with python 311
-with pythonVersion.pkgs;
+with python.pkgs;
 buildPythonApplication {
   pname = "pysubfixer";
   version = "1.0";

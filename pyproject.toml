@@ -4,8 +4,8 @@ version = "0.1.0"
 description = "tool to change embedded subtitles"
 authors = ["MadMcCrow <do-not-mail.me@please.com>"]
 packages = [
-        {include = "gui",    from = "src"},
-        {include = "src"},
+        {include = "*", from = "src" },
+        {include = "gui", from = "src"}
     ]
 readme = "docs/README.md"
 license-files = ["docs/LICENSE.md"]
@@ -15,8 +15,8 @@ python = "^3.11"
 PySide6 = "^6.0.0"
 
 [tool.poetry.scripts]
-pysubfixer-cli = 'src.pysubfixer:cli'
-pysubfixer-gui = 'src.pysubfixer:gui'
+pysubfixer-cli = 'pysubfixer:cli'
+pysubfixer-gui = 'pysubfixer:gui'
 
 [build-system]
 requires = ["poetry-core>=1.9.1,<3.0"]

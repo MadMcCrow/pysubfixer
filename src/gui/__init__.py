@@ -21,4 +21,6 @@ def qt_app() :
         myApp.exec()
     except Exception as E :
         print(f'Error : {repr(E)}')
+        myApp.close()
         sys.exit(1)
+        

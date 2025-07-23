@@ -7,6 +7,7 @@ import asyncio
 import shlex
 import shutil
 import sys
+from datetime import datetime
 from typing import List, Callable
 
 
@@ -38,11 +39,10 @@ class FFmpeg() :
             return f"{self._o} -i '{self.path()}'"
 
         def path(self) -> str: 
-
             """return the path only"""
             return os.path.abspath(self._p)
-        def exists(self) -> bool :
 
+        def exists(self) -> bool :
             """check input validity"""
             return os.path.exists(self.path())
 
@@ -53,17 +53,14 @@ class FFmpeg() :
             TODO : expand and improve
         """
         def __init__(self, inputs : list , outputfile : str, outputoptions = '') : 
-            self.__in = inputs
+            self.inputs = inputs
             self.__out = os.path.abspath(outputfile)
             self.__outopts = outputoptions
 
         def __str__(self) -> str : 
             instr = " ".join(map(str, self.inputs))
-            outstr = f"{self.__outopts} {self.__out}"
+            outstr = f"{self.__outopts} '{self.__out}'"
             return f"{instr} {outstr}"
-
-        def to_shargs(self) :
-            return shlex.split(str(self))
 
         def input_files(self) ->List[str] :
             return [x.path() for x in self.inputs]
@@ -77,57 +74,15 @@ class FFmpeg() :
             self.__in = []
             for x in paths : 
                 if isinstance(x, str)  :
-                    x = FFmpegInput(x)
+                    x = FFmpeg.Input(x)
                 if x.exists() :
                     self.__in.append(x)
                 else :
                     raise FileNotFoundError(f"file {x.path()} does not exists !")
 
-
-    class  Output() :
-        """
-            class to handle stdout and stderr of ffmpeg
-        """
-        @staticmethod
-        def _time() :
-            return time.now()
-
-        def __init__(self, args : str, name = None) -> None:
-            self.name = name
-            self.__cmd = ' '.join(args)
-            self.__start = _time()
-            self.__end = None
-            self.__out = {}
-            self.__err = {}
-
-        def stdout(self, instr : str) -> None :
-            self.__out[_time()] = instr
-        def stderr(self, instr : str) -> None :
-            self.__err[_time()] = instr
-        def __str__(self) -> str:   
-            res = ""
-            for (k,v) in self.__out.items() :
-                res += v + '\n'
-            return res
-        def log(self) -> str :
-            """
-                write as a log
-            """
-            l = []
-            for (k,v) in self.__out.items() :
-                l.append(f'<{k}> - {v}')
-            for (k,v) in self.__err.items() :
-                l.append(f'<{k}> - ERROR : {v}')
-            l.sort()
-            l.insert(0, f"'{self.__cmd}' started at {self.__start}")
-            l.append(f'execution took {self.duration()}')
-            return '\n'.join(l)
-        def close(self, fut) :
-            self.__end = _time()
-        def duration(self) :
-            if self.__end is not None :
-                return self.__end - self.__start 
-            return _time() - self.__start
+        def __iter__(self) : 
+            for elem in self.inputs :
+                yield str(elem)
 
 
     @staticmethod
@@ -135,29 +90,32 @@ class FFmpeg() :
         """
             make sure file exist
         """
-        if not path.exists(path.abspath(filepath)) :
+        if not os.path.exists(os.path.abspath(filepath)) :
             raise FileNotFoundError(f"{filepath} does not exists")
 
-    @staticmethod
-    def check_FFmpeg() :
+    classmethod
+    def check_FFmpeg(cls) :
         """
             make sure ffmpeg is installed
         """
-        pathbin = shutil.which(self.command)
+        pathbin = shutil.which(cls.command)
         if not os.path.exists(pathbin) :
             raise EnvironmentError(f"{command} is not available")
    
-    def __init__(self, arguments :  Arguments,  on_finished : Callable| None = None) :
+    def __init__(self, arguments :  Arguments | tuple,  on_finished : Callable| None = None) :
         """
             create ffmpeg process and start async task
+            #TODO : move to kwargs to arguments
         """
         # copy to our object
+        if isinstance(arguments, tuple) :
+            arguments = FFmpeg.Arguments(*arguments)
         self.args = arguments
         self._cb = on_finished
         # check ffmpeg is available :
-        check_FFmpeg()
+        self.check_FFmpeg()
         # check that all files exists :
-        [check_file(x) for x in arguments.input_files()]
+        [self.check_file(x) for x in arguments.input_files()]
         # if we're in a simulation, print and exit :
         try : 
             if globals()["simulate"] :
@@ -165,35 +123,34 @@ class FFmpeg() :
                 sys.exit(0)
         except :
             pass
-        # else start the process :
-        loop = asyncio.get_running_loop()
-        self._out = FFmpegStdio()
-        self._task = loop.create_task(_execute, name="ffmpeg")
-        self._task.add_done_callback(on_finished)
+        self._task = None
+    
+    async def start(self) :
+        self._out = FFmpeg.Output()
+        await self._execute()
+        async for stdout, stderr in self._stream():
+            if stdout:
+                self._out.stdout(stdout)
+            if stderr:
+                self._out.stderr(stderr)
+        rc = await self.wait()
 
-    def is_running(self) -> bool :
-        """
-            returns true if ffmpeg is running in the background
-        """
-        try:
-            if self._task.cancelled() or self._task.done() :
-                return False
-        except :
-            return False
-        finally :
-            return True
-
+    async def wait(self) :
+        if self.ps is None:
+            return None
+        rc = await self.ps.wait()
+       
+ 
+                
     async def _execute(self) :
         """
             async method running the actual subprocess
         """
-        _pipe = asyncio.subprocess.PIPE
-        ps = await asyncio.create_subprocess_exec(self.command, self.args.to_shargs(), stdin =_pipe, stdout=_pipe)
-        async with asyncio.TaskGroup() as tg:
-            tg.create_task(self.__read_stream(ps.stdout, self._out.stdout ))
-            tg.create_task(self.__read_stream(ps.stderr, self._out.stderr ))
-        rc = await ps.wait()
-        return self._out
+        spl = shlex.split(f"{self.command} {str(self.args)}")
+        print(f"CMD = {self.command} {str(self.args)}")
+        print(f"SPL = {spl}")
+        sys.exit()
+        self.ps = await asyncio.create_subprocess_exec(spl[0], *spl[1:], stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 
     def _on_finish(self, fut) :
         """
@@ -202,13 +159,18 @@ class FFmpeg() :
         if self._cb is not None :
             self._cb()
 
-    async def __read_stream(self, stream, cb):
+
+    async def _stream(self):
         """
             read stream, non-blocking
         """
         while True:
-            line = await stream.readline()
-            if line:
-                cb(line.decode(locale.getencoding()))
-            else:
+            if self.ps.stdout.at_eof() and self.ps.stderr.at_eof():
                 break
+            stdout = await self.ps.stdout.readline()
+            stderr = await self.ps.stderr.readline()
+            yield stdout.decode(), stderr.decode()
+            await asyncio.sleep(0.1) # TODO store in variable
+
+    def get_progress(self) :
+        pass

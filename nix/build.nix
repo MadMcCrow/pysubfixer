@@ -1,7 +1,7 @@
 # build with nuitka
-{ pythonVersion, ... } :
+{ python, ... } :
 let 
-  nuitka = pythonVersion.pkgs.nuitka;
+  nuitka = python.pkgs.nuitka;
 in
 {
   
