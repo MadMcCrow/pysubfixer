@@ -23,7 +23,7 @@
         let 
           pkgs = nixpkgs.legacyPackages.${system};
           args = {
-            python = pycall.packages.${system}.python311;
+            python = pycall.packages.${system}.python312;
             };
         in {
         legacyPackages.${system}    = pkgs.callPackage ./nix/pysubfixer.nix args;

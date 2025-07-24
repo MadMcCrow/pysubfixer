@@ -26,7 +26,7 @@ async def fix_subs( subs : str, video : str , delay : int, output : str, on_fini
     sn = "{}.sn{}".format(*os.path.splitext(video)) 
     if os.path.exists(sn) :
         os.remove(sn)
-    deletesubs = FFmpeg(FFmpeg.Arguments([video], sn, "-c:v copy -c:a copy -sn"))
+    deletesubs = FFmpeg(f"-i {video} -c:v copy -c:a copy -sn {sn}")
     sd = "{0}.{2}{1}".format(*(os.path.splitext(subs) + (delay,)))
     if os.path.exists(sd) :
         os.remove(sd)

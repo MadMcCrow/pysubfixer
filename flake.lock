@@ -21,11 +21,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1753309724,
-        "narHash": "sha256-W6imaOL2mTPmEZtM/wynp+6CBnNpWknM4YNJX0rNyY4=",
+        "lastModified": 1753393281,
+        "narHash": "sha256-Wd2kQ7+P77wQKPUSAfU1hYpmwkNF9odFRWKofmRqNpk=",
         "owner": "MadMcCrow",
         "repo": "pycall",
-        "rev": "5de9140e96b3b2eeefc2cad776284391081556f3",
+        "rev": "e25f5a6b8971dfaa2ad9aec47c01ef2d1f899d25",
         "type": "github"
       },
       "original": {
