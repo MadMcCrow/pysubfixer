@@ -3,13 +3,10 @@
 
 # python
 import os
-import asyncio
-import shlex
-import shutil
-import sys
-from datetime import datetime
-from typing import List, Callable
+from time import sleep
+from typing import List, Optional
 
+# ours
 from .ffcmd import FFcmd
 
 
@@ -18,10 +15,10 @@ class FFmpeg(FFcmd) :
         class to represent an instance of ffmpeg running in the background
     """
     
-    def __init__(self, arguments) :
-        """
-            create ffmpeg process and start async task
-        """
+    cmd : str = "ffmpeg.exe" if os.name == 'nt' else "ffmpeg"
+
+    def __init__(self, *inputs, options : Optional, output) :
+        """ create ffmpeg process and start async task """
+        self.args = [ f"-i {x}" for x in inputs] + options + [output]
         # the ffmpeg binary name changes depending on platform
-        command = "ffmpeg.exe" if os.name == 'nt' else "ffmpeg"
-        self._execute(command)
+        self._execute()
