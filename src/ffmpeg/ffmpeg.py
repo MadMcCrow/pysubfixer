@@ -3,14 +3,10 @@
 
 # python
 import os
-import asyncio
-import shlex
-import shutil
-import sys
-from datetime import datetime
-from typing import List, Callable
+from time import sleep
 
 from .ffcmd import FFcmd
+
 
 
 class FFmpeg(FFcmd) :
@@ -19,9 +15,8 @@ class FFmpeg(FFcmd) :
     """
     
     def __init__(self, arguments) :
-        """
-            create ffmpeg process and start async task
-        """
+        """ create ffmpeg process and start async task """
         # the ffmpeg binary name changes depending on platform
         command = "ffmpeg.exe" if os.name == 'nt' else "ffmpeg"
+        print(command)
         self._execute(command)

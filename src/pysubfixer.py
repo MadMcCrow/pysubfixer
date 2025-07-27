@@ -4,11 +4,8 @@
 # python
 from argparse import ArgumentParser
 from typing import Callable
-import os
-import sys
-import time
+import os, sys
 import asyncio
-
 # rich printing
 try :
     from rich import print
@@ -19,7 +16,10 @@ except:
 from ffmpeg import FFmpeg
 
 
-async def fix_subs( subs : str, video : str , delay : int, output : str, on_finished : Callable) :
+async def await_commands(*commands) :
+    await asyncio.gather(*(map (lambda x : x.wait(), commands)), return_exceptions=True)
+
+def fix_subs( subs : str, video : str , delay : int, output : str, on_finished : Callable) :
     """
         main command of pysubfixer
     """
@@ -30,8 +30,8 @@ async def fix_subs( subs : str, video : str , delay : int, output : str, on_fini
     sd = "{0}.{2}{1}".format(*(os.path.splitext(subs) + (delay,)))
     if os.path.exists(sd) :
         os.remove(sd)
-    movesubs = FFmpeg(FFmpeg.Arguments([FFmpeg.Input(subs, f"-itsoffset {delay}")],sd))
-    await asyncio.gather(deletesubs.start(), movesubs.start())
+    movesubs = FFmpeg(f"{subs} -itsoffset {delay} {sd}")
+    asyncio.run(await_commands(deletesubs, movesubs))
     on_finished()
 
 
@@ -51,14 +51,12 @@ def cli() :
     _simulate = args.simulate
     # make sure to have a good output file name :
     output = args.output if args.output is not None else "{0}.pysubfix-{2}.{1}".format(*(os.path.splitext(args.video_file) + (args.delay,)))
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
     fix_subs(
         subs  = args.subtitle_file,
         video = args.video_file,
         delay = args.delay, 
         output= output, 
-        on_finished=sys.exit ))
+        on_finished=sys.exit )
      
 
 def gui() :

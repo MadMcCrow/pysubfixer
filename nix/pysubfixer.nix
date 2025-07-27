@@ -7,7 +7,7 @@ buildPythonApplication {
   pname = "pysubfixer";
   version = "1.0";
   pyproject = true;
-  buildInputs = [ poetry-core pyside6 ];
-  propagatedBuildInputs = [pyside6];
+  buildInputs = [ poetry-core pyside6 pycall ];
+  propagatedBuildInputs = [pyside6 pycall ];
   src = ./..;
 }
