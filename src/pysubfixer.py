@@ -41,8 +41,8 @@ def cli() :
     """
     parser = ArgumentParser(description="Fix your subtitles with this amazing script !")
     #subparsers = parser.add_subparsers(description='available subcommands')
-    parser.add_argument("video_file", help="input video file")
-    parser.add_argument("subtitle_file", help="input subtitle file")
+    #parser.add_argument("video_file", help="input video file")
+    #parser.add_argument("subtitle_file", help="input subtitle file")
     parser.add_argument("-d", "--delay", type=int, help="delay amount in seconds", default=0)
     parser.add_argument("-o", "--output", help="output file", default=None)
     parser.add_argument("-s", "--simulate", action="store_true", help="Enable simulate mode")
@@ -50,10 +50,10 @@ def cli() :
     global _simulate
     _simulate = args.simulate
     # make sure to have a good output file name :
-    output = args.output if args.output is not None else "{0}.pysubfix-{2}.{1}".format(*(os.path.splitext(args.video_file) + (args.delay,)))
+    output = ""# args.output if args.output is not None else "{0}.pysubfix-{2}.{1}".format(*(os.path.splitext(args.video_file) + (args.delay,)))
     fix_subs(
-        subs  = args.subtitle_file,
-        video = args.video_file,
+        subs  = "", #args.subtitle_file,
+        video = "", #args.video_file,
         delay = args.delay, 
         output= output, 
         on_finished=sys.exit )
