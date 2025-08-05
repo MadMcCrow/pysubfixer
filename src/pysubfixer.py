@@ -17,7 +17,7 @@ from ffmpeg import FFmpeg
 
 
 async def await_commands(*commands) :
-    await asyncio.gather(*(map (lambda x : x.wait(), commands)), return_exceptions=True)
+    await asyncio.gather(*(map (lambda x : x.wait(), commands)))
 
 def fix_subs( subs : str, video : str , delay : int, output : str, on_finished : Callable) :
     """

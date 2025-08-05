@@ -18,19 +18,15 @@ class FFcmd() :
         self.is_running = False
 
     def _execute(self, cmd) :
-        pycall.run(cmd, on_end_f = self.on_finished)
-        self.is_running = True
+        self._cmd = cmd
+        self.daemon = pycall.run(self._cmd, on_end_f = self.on_finished)
 
     def on_finished(self, return_code) :
         print("finished running cmd")
         self.is_running = False
         pass
 
-    async def wait(self) :
-        idx = 0
-        characters = ['.  ', '.. ', '...']
-        while self.is_running :
-            idx = idx % len(characters)
-            print("please wait" + characters[idx], end='\r')
-            await asyncio.sleep(0.2)
-            idx += 1
+    def wait(self) :
+        pycall.wait(self.daemon)
+
+
