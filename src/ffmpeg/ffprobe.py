@@ -1,4 +1,3 @@
-
 #! /usr/env python
 # ffmpeg/ffprobe.py :run ffprobe more snakily
 

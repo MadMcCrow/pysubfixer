@@ -5,7 +5,8 @@ description = "tool to change embedded subtitles"
 authors = ["MadMcCrow <do-not-mail.me@please.com>"]
 packages = [
         {include = "*", from = "src" },
-        {include = "gui", from = "src"}
+#        {include = "gui", from = "src"}
+#        {include = "cli", from = "src"}
     ]
 readme = "docs/README.md"
 license-files = ["docs/LICENSE.md"]
@@ -13,6 +14,17 @@ license-files = ["docs/LICENSE.md"]
 [tool.poetry.dependencies]
 python = "^3.11"
 pycall = "^0.1"
+
+
+
+[tool.poetry.group.cli.dependencies]
+rich = "*"
+
+
+[tool.poetry.group.gui]
+optional = true
+
+[tool.poetry.group.gui.dependencies]
 PySide6 = "^6.0.0"
 
 [tool.poetry.scripts]

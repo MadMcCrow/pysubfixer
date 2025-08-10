@@ -11,27 +11,11 @@ try :
 except:
     from builtins import print
 
-# pycall
-import pycall
-
 # ours :
 from ffmpeg import FFmpeg
+from cli import fix_subs
 
 
-def fix_subs( subs : str, video : str , delay : int, output : str, on_finished : Callable) :
-    """
-        main command of pysubfixer
-    """
-    sn = "{}.sn{}".format(*os.path.splitext(video)) 
-    if os.path.exists(sn) :
-        os.remove(sn)
-    deletesubs = FFmpeg( inputs = video, output=sn, options="-c:v copy -c:a copy -sn")
-    sd = "{0}.{2}{1}".format(*(os.path.splitext(subs) + (delay,)))
-    if os.path.exists(sd) :
-        os.remove(sd)
-    movesubs = FFmpeg(f"{subs} -itsoffset {delay} {sd}")
-    pycall.wait(deletesubs, movesubs)
-    on_finished()
 
 
 def cli() :

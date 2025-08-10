@@ -17,8 +17,17 @@ class FFmpeg(FFcmd) :
     
     cmd : str = "ffmpeg.exe" if os.name == 'nt' else "ffmpeg"
 
-    def __init__(self, *inputs, options : Optional, output) :
+    def __init__(self, *inputs, output, options : List | str | None = None ) :
         """ create ffmpeg process and start async task """
-        self.args = [ f"-i {x}" for x in inputs] + options + [output]
-        # the ffmpeg binary name changes depending on platform
+        self.outfile = output
+        self.args = [ f"-i {self.checkfile(x, True)}" for x in inputs]
+        if isinstance(options, str) :
+            self.args.append(options)
+        elif isinstance(options,list) :
+            self.args += [str(x) for x in options]
+        self.args.append(self.checkfile(output, False))
+        # run
         self._execute()
+
+    def output(self) :
+        return self.checkfile(self.outfile, None)
